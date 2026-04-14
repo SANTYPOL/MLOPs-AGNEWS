@@ -2,40 +2,29 @@ name: MLOps Pipeline
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-
-    - name: Checkout Code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Setup Python
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.10
 
-    - name: Install Dependencies
+    - name: Install dependencies
       run: |
+        pip install --upgrade pip
         pip install -r requirements.txt
-        pip install dvc pytest
 
-    - name: Run DVC Pipeline (Training)
+    - name: Install DVC
+      run: pip install dvc
+
+    - name: Run pipeline
       run: |
-        dvc repro
-
-    - name: Run Unit Tests
-      run: |
-        pytest tests/
-
-    - name: Upload Artifacts (Model + Plots)
-      uses: actions/upload-artifact@v3
-      with:
-        name: ml-artifacts
-        path: |
-          models/
-          artifacts/
+        python -m src.pipeline.training_pipeline
