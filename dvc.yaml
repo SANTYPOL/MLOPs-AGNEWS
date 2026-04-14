@@ -1,0 +1,29 @@
+stages:
+  ingest:
+    cmd: python -m src.components.data_ingestion
+    outs:
+      - data/raw/agnews.csv
+
+  preprocess:
+    cmd: python -m src.components.preprocessing
+    deps:
+      - data/raw/agnews.csv
+      - src/components/preprocessing.py
+    outs:
+      - data/processed/
+
+  train:
+    cmd: python -m src.pipeline.training_pipeline
+    deps:
+      - data/raw/agnews.csv
+      - src/components/trainer.py
+      - src/components/preprocessing.py
+    outs:
+      - models/model.pkl
+      - artifacts/model_comparison.png
+
+  evaluate:
+    cmd: python -m src.components.evaluator
+    deps:
+      - models/model.pkl
+      - src/components/evaluator.py

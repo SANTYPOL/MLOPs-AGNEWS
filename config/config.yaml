@@ -1,0 +1,22 @@
+# ============================================
+# Fake News Detection - AG News Dataset
+# Configuration File
+# ============================================
+
+# -------------------- Training Settings --------------------
+training:
+  # 🔥 VERY IMPORTANT: Set to 'true' for quick testing with a subset of data
+  # When test_mode is true, only 'max_samples' rows will be used
+  # When false, the full dataset (120,000 training samples) will be loaded
+  test_mode: false
+
+  # Maximum number of samples to use when test_mode = true
+  # Ignored when test_mode = false
+  max_samples: 1000   # Adjust as needed (e.g., 5000, 10000)
+
+# -------------------- MLflow Tracking --------------------
+mlflow:
+  # Name of the MLflow experiment where all runs will be grouped
+  # Each model training (LogReg, NaiveBayes, SVM, RandomForest, BERT)
+  # will be logged under this experiment
+  experiment: agnews-exp

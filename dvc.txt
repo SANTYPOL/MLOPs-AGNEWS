@@ -1,0 +1,71 @@
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005
+$ ls
+Dockerfile  README.md  app/  artifacts/  bert_results/  config/  data/  mlflow.db  mlruns/  models/  requirements.txt  run.txt  src/  tests/
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005
+$ git init
+Initialized empty Git repository in D:/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005/.git/
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ dvc init
+Initialized DVC repository.
+
+You can now commit the changes to git.
+
++---------------------------------------------------------------------+
+|                                                                     |
+|        DVC has enabled anonymous aggregate usage analytics.         |
+|     Read the analytics documentation (and how to opt-out) here:     |
+|             <https://dvc.org/doc/user-guide/analytics>              |
+|                                                                     |
++---------------------------------------------------------------------+
+
+What's next?
+------------
+- Check out the documentation: <https://dvc.org/doc>
+- Get help and share ideas: <https://dvc.org/chat>
+- Star us on GitHub: <https://github.com/treeverse/dvc>
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ git add .dvc .gitignore
+fatal: pathspec '.gitignore' did not match any files
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ git add .dvc .dvcignore
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ git commit -m "Initialize DVC"
+[master (root-commit) ad53178] Initialize DVC
+ 3 files changed, 6 insertions(+)
+ create mode 100644 .dvc/.gitignore
+ create mode 100644 .dvc/config
+ create mode 100644 .dvcignore
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ dvc add data/
+100% Adding...|██████████████████████████████████████████████████████████████████████████████████████████████████████████|1/1 [00:00,  4.38file/s]
+
+To track the changes with git, run:
+
+        git add .gitignore data.dvc
+
+To enable auto staging, run:
+
+        dvc config core.autostage true
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ git add data.dvc .gitignore
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$ git commit -m "Track dataset"
+[master 6ee698c] Track dataset
+ 2 files changed, 7 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 data.dvc
+
+santy@SANTYPOL_AIML MINGW64 /d/SEM-2/MLOPS/capstone/AGNEWS/MLOPS_V005 (master)
+$
