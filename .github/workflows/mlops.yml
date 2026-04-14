@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      CI: "true"
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
@@ -22,8 +25,9 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Install DVC
-      run: pip install dvc
+    - name: Fix PYTHONPATH
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
 
     - name: Run pipeline
       run: |
