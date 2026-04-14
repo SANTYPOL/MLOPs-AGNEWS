@@ -7,3 +7,26 @@ stages:
       hash: md5
       md5: ec11424b461a90d7dcadab9ec8f34427
       size: 29044928
+  train:
+    cmd: conda run -n FinQA_v4 python -m src.pipeline.training_pipeline
+    deps:
+    - path: data/raw/agnews.csv
+      hash: md5
+      md5: ec11424b461a90d7dcadab9ec8f34427
+      size: 29044928
+    - path: src/
+      hash: md5
+      md5: d59c5a8ae321e2a14e643b1527bd85f7.dir
+      size: 29808
+      nfiles: 13
+    outs:
+    - path: artifacts/
+      hash: md5
+      md5: abed74a7b3ca1d7bbb0cb5410e6b2b1f.dir
+      size: 38300
+      nfiles: 2
+    - path: models/
+      hash: md5
+      md5: 12f48dff44a93bd49c4a9d431d3da76f.dir
+      size: 2802801
+      nfiles: 2
