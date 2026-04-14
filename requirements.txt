@@ -9,3 +9,5 @@ tqdm
 datasets
 seaborn
 matplotlib
+fastapi
+uvicorn
