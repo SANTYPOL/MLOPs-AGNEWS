@@ -7,3 +7,5 @@ uvicorn
 pyyaml
 tqdm
 datasets
+seaborn
+matplotlib
