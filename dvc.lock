@@ -1,0 +1,9 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: conda run -n FinQA_v4 python -m src.components.data_ingestion
+    outs:
+    - path: data/raw/agnews.csv
+      hash: md5
+      md5: ec11424b461a90d7dcadab9ec8f34427
+      size: 29044928
