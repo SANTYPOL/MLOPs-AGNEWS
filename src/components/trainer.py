@@ -1,14 +1,8 @@
 """
-Training Module (Production-Ready with MLflow)
-=============================================
-- Trains Naive Bayes and SVM
-- Logs params, metrics, artifacts properly
-- Uses nested MLflow runs
-- Logs models for Model Registry
+FINAL Trainer (MLflow + DVC + Production Ready)
 """
 
 import os
-import time
 import pickle
 import mlflow
 import mlflow.sklearn
@@ -25,6 +19,10 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 
 def train(df, config=None):
+
+    # 🔥 CRITICAL FIX (DO NOT REMOVE)
+    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_experiment("AGNEWS_PIPELINE")
 
     print("🚀 Training Models (NaiveBayes + SVM)...")
 
@@ -45,9 +43,6 @@ def train(df, config=None):
     os.makedirs("models", exist_ok=True)
     os.makedirs("artifacts", exist_ok=True)
 
-    # 🔥 IMPORTANT: set experiment
-    mlflow.set_experiment("AGNEWS_PIPELINE")
-
     # 🔥 MAIN RUN
     with mlflow.start_run(run_name="full_pipeline"):
 
@@ -60,9 +55,7 @@ def train(df, config=None):
                 ("model", model)
             ])
 
-            start = time.time()
-
-            # 🔥 NESTED RUN (one per model)
+            # 🔥 NESTED RUN (important)
             with mlflow.start_run(run_name=name, nested=True):
 
                 pipe.fit(X_train, y_train)
@@ -72,7 +65,7 @@ def train(df, config=None):
 
                 results[name] = acc
 
-                # ✅ Log params + metrics
+                # ✅ Params + metrics
                 mlflow.log_param("model", name)
                 mlflow.log_metric("accuracy", acc)
 
@@ -80,7 +73,7 @@ def train(df, config=None):
                 model_path = f"models/{name}.pkl"
                 pickle.dump(pipe, open(model_path, "wb"))
 
-                # ✅ Log model properly (IMPORTANT)
+                # ✅ Log model (VERY IMPORTANT)
                 mlflow.sklearn.log_model(pipe, name)
 
                 print(f"✅ {name} Accuracy: {acc:.4f}")
