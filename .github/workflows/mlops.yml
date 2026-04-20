@@ -9,7 +9,7 @@ jobs:
 build-and-deploy:
 runs-on: ubuntu-latest
 
-```
+
 steps:
   - name: Checkout Repo
     uses: actions/checkout@v4
@@ -56,4 +56,4 @@ steps:
         sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:latest
 
         echo "✅ Deployment complete!"
-```
+
