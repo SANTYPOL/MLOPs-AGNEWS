@@ -41,4 +41,4 @@ steps:
         sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:v2
 
         echo "✅ Deployment complete!"
-```
+
