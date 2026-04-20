@@ -6,13 +6,30 @@ branches:
 - main
 
 jobs:
-deploy:
+build-and-deploy:
 runs-on: ubuntu-latest
 
+```
 steps:
   - name: Checkout Repo
     uses: actions/checkout@v4
 
+  # 🔐 Login to Docker Hub
+  - name: Login to Docker Hub
+    uses: docker/login-action@v3
+    with:
+      username: ${{ secrets.DOCKER_USERNAME }}
+      password: ${{ secrets.DOCKER_PASSWORD }}
+
+  # 🐳 Build & Push Docker Image
+  - name: Build and Push Docker Image
+    run: |
+      docker build -t santypol/mlops-agnews:latest .
+      docker tag santypol/mlops-agnews:latest santypol/mlops-agnews:${{ github.sha }}
+      docker push santypol/mlops-agnews:latest
+      docker push santypol/mlops-agnews:${{ github.sha }}
+
+  # 🚀 Deploy to EC2
   - name: Deploy to EC2 via SSH
     uses: appleboy/ssh-action@v1.0.3
     with:
@@ -20,8 +37,9 @@ steps:
       username: ubuntu
       key: ${{ secrets.EC2_SSH_KEY }}
       script: |
-        echo "🚀 Connecting to EC2..."
+        echo "🚀 Deploying on EC2..."
 
+        # Pull latest code (optional but good)
         if [ ! -d "MLOPS_DEMO" ]; then
           git clone https://github.com/SANTYPOL/MLOPs-AGNEWS.git MLOPS_DEMO
         fi
@@ -29,14 +47,13 @@ steps:
         cd MLOPS_DEMO
         git pull origin main
 
-        echo "📦 Running pipeline..."
-        pip install -r requirements.txt
-        dvc repro --force
+        echo "🐳 Updating container..."
+        sudo docker pull santypol/mlops-agnews:latest
 
-        echo "🐳 Restarting Docker..."
-        sudo docker pull santypol/mlops-agnews:v2
         sudo docker stop mlops-api || true
         sudo docker rm mlops-api || true
-        sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:v2
+
+        sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:latest
 
         echo "✅ Deployment complete!"
+```
