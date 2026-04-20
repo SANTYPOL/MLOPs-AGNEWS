@@ -1,31 +1,47 @@
-name: MLOps Pipeline
+name: MLOps CI/CD Pipeline
 
 on:
-  push:
-    branches: [ "main" ]
+push:
+branches:
+- main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+deploy:
+runs-on: ubuntu-latest
 
-    env:
-      PYTHONPATH: ${{ github.workspace }}
-      CI: "true"
+```
+steps:
+  - name: Checkout Repo
+    uses: actions/checkout@v4
 
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+  - name: Deploy to EC2 via SSH
+    uses: appleboy/ssh-action@v1.0.3
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ubuntu
+      key: ${{ secrets.EC2_SSH_KEY }}
+      script: |
+        echo "🚀 Connecting to EC2..."
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+        # Clone if not exists
+        if [ ! -d "MLOPS_DEMO" ]; then
+          git clone https://github.com/SANTYPOL/MLOPs-AGNEWS.git MLOPS_DEMO
+        fi
 
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
+        cd MLOPS_DEMO
+        git pull origin main
+
+        echo "📦 Running pipeline..."
         pip install -r requirements.txt
+        dvc repro --force
 
-    - name: Run pipeline
-      run: |
-        python -m src.pipeline.training_pipeline
+        echo "🐳 Restarting Docker..."
+        sudo docker pull santypol/mlops-agnews:v2
+
+        sudo docker stop mlops-api || true
+        sudo docker rm mlops-api || true
+
+        sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:v2
+
+        echo "✅ Deployment complete!"
+```
