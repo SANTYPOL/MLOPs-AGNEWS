@@ -23,7 +23,6 @@ steps:
       script: |
         echo "🚀 Connecting to EC2..."
 
-        # Clone if not exists
         if [ ! -d "MLOPS_DEMO" ]; then
           git clone https://github.com/SANTYPOL/MLOPs-AGNEWS.git MLOPS_DEMO
         fi
@@ -37,10 +36,8 @@ steps:
 
         echo "🐳 Restarting Docker..."
         sudo docker pull santypol/mlops-agnews:v2
-
         sudo docker stop mlops-api || true
         sudo docker rm mlops-api || true
-
         sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:v2
 
         echo "✅ Deployment complete!"
