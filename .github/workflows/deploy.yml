@@ -1,0 +1,43 @@
+name: MLOps CI/CD Pipeline
+
+on:
+push:
+branches:
+- main
+
+jobs:
+deploy:
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Repo
+    uses: actions/checkout@v3
+
+  - name: SSH & Deploy to EC2
+    uses: appleboy/ssh-action@v1.0.3
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ubuntu
+      key: ${{ secrets.EC2_SSH_KEY }}
+      script: |
+        echo "🚀 Deploying on EC2..."
+
+        cd ~/MLOPS_DEMO || git clone https://github.com/SANTYPOL/MLOPs-AGNEWS.git ~/MLOPS_DEMO
+        cd ~/MLOPS_DEMO
+
+        git pull origin main
+
+        echo "📦 Running DVC pipeline..."
+        dvc repro --force
+
+        echo "🐳 Updating Docker container..."
+        docker pull santypol/mlops-agnews:v2
+
+        docker stop mlops-api || true
+        docker rm mlops-api || true
+
+        docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:v2
+
+        echo "✅ Deployment complete!"
+```
