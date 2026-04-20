@@ -9,8 +9,9 @@ jobs:
 build-and-deploy:
 runs-on: ubuntu-latest
 
+```
 steps:
-  - name: Checkout Repo
+  - name: Checkout repository
     uses: actions/checkout@v4
 
   - name: Login to Docker Hub
@@ -19,21 +20,21 @@ steps:
       username: ${{ secrets.DOCKER_USERNAME }}
       password: ${{ secrets.DOCKER_PASSWORD }}
 
-  - name: Build and Push Docker Image
+  - name: Build and push Docker image
     run: |
       docker build -t santypol/mlops-agnews:latest .
       docker tag santypol/mlops-agnews:latest santypol/mlops-agnews:${{ github.sha }}
       docker push santypol/mlops-agnews:latest
       docker push santypol/mlops-agnews:${{ github.sha }}
 
-  - name: Deploy to EC2 via SSH
+  - name: Deploy on EC2
     uses: appleboy/ssh-action@v1.0.3
     with:
       host: ${{ secrets.EC2_HOST }}
       username: ubuntu
       key: ${{ secrets.EC2_SSH_KEY }}
       script: |
-        echo "🚀 Deploying on EC2..."
+        echo "🚀 Deployment started"
 
         if [ ! -d "MLOPS_DEMO" ]; then
           git clone https://github.com/SANTYPOL/MLOPs-AGNEWS.git MLOPS_DEMO
@@ -42,10 +43,13 @@ steps:
         cd MLOPS_DEMO
         git pull origin main
 
-        echo "🐳 Restarting container..."
+        echo "🐳 Updating container..."
         sudo docker pull santypol/mlops-agnews:latest
+
         sudo docker stop mlops-api || true
         sudo docker rm mlops-api || true
+
         sudo docker run -d -p 8000:8000 --name mlops-api santypol/mlops-agnews:latest
 
-        echo "✅ Deployment complete!"
+        echo "✅ Deployment completed"
+```
